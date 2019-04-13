@@ -43,7 +43,7 @@
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-plugin-flowtype": "^2.49.3",
-    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-import": "^2.17.0",
     "estraverse": "^4.2.0",
     "expect": "^21.2.1",
     "flow-bin": "^0.88.0",
