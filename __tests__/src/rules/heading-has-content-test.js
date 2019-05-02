@@ -27,6 +27,10 @@ const components = [{
   components: ['Heading', 'Title'],
 }];
 
+const attributes = [{
+  attributes: ['data-l10n-id'],
+}];
+
 ruleTester.run('heading-has-content', rule, {
   valid: [
     // DEFAULT ELEMENT TESTS
@@ -43,6 +47,7 @@ ruleTester.run('heading-has-content', rule, {
     { code: '<h1>{foo.bar}</h1>' },
     { code: '<h1 dangerouslySetInnerHTML={{ __html: "foo" }} />' },
     { code: '<h1 children={children} />' },
+    { code: '<h1 data-l10n-id="test" />', options: attributes },
     // CUSTOM ELEMENT TESTS FOR COMPONENTS OPTION
     { code: '<Heading>Foo</Heading>', options: components },
     { code: '<Title>Foo</Title>', options: components },
@@ -58,7 +63,8 @@ ruleTester.run('heading-has-content', rule, {
     { code: '<h1 />', errors: [expectedError] },
     { code: '<h1><Bar aria-hidden /></h1>', errors: [expectedError] },
     { code: '<h1>{undefined}</h1>', errors: [expectedError] },
-
+    { code: '<h1 data-l10n-id="" />', options: attributes, errors: [expectedError] },
+    { code: '<h1 data-l10n-id />', options: attributes, errors: [expectedError] },
     // CUSTOM ELEMENT TESTS FOR COMPONENTS OPTION
     { code: '<Heading />', errors: [expectedError], options: components },
     { code: '<Heading><Bar aria-hidden /></Heading>', errors: [expectedError], options: components },

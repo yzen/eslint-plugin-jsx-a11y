@@ -7,7 +7,7 @@
 // Rule Definition
 // ----------------------------------------------------------------------------
 
-import { elementType } from 'jsx-ast-utils';
+import { elementType, getProp, getPropValue } from 'jsx-ast-utils';
 import { generateObjSchema, arraySchema } from '../util/schemas';
 import hasAccessibleChild from '../util/hasAccessibleChild';
 import isHiddenFromScreenReader from '../util/isHiddenFromScreenReader';
@@ -23,7 +23,10 @@ const headings = [
   'h6',
 ];
 
-const schema = generateObjSchema({ components: arraySchema });
+const schema = generateObjSchema({
+  components: arraySchema,
+  attributes: arraySchema,
+});
 
 module.exports = {
   meta: {
@@ -37,6 +40,7 @@ module.exports = {
     JSXOpeningElement: (node) => {
       const options = context.options[0] || {};
       const componentOptions = options.components || [];
+      const attributeOptions = options.attributes || [];
       const typeCheck = headings.concat(componentOptions);
       const nodeType = elementType(node);
 
@@ -48,6 +52,12 @@ module.exports = {
         return;
       }
       if (isHiddenFromScreenReader(nodeType, node.attributes)) {
+        return;
+      }
+      if (attributeOptions.some((attribute) => {
+        const value = getPropValue(getProp(node.attributes, attribute));
+        return typeof value === 'string' && value.length > 0;
+      })) {
         return;
       }
 

@@ -16,6 +16,14 @@ import rule from '../../../src/rules/anchor-has-content';
 // Tests
 // -----------------------------------------------------------------------------
 
+const components = [{
+  components: ['Anchor'],
+}];
+
+const attributes = [{
+  attributes: ['data-l10n-id'],
+}];
+
 const ruleTester = new RuleTester();
 
 const expectedError = {
@@ -27,6 +35,8 @@ ruleTester.run('anchor-has-content', rule, {
   valid: [
     { code: '<div />;' },
     { code: '<a>Foo</a>' },
+    { code: '<Anchor>Foo</Anchor>', options: components },
+    { code: '<a data-l10n-id="test" />', options: attributes },
     { code: '<a><Bar /></a>' },
     { code: '<a>{foo}</a>' },
     { code: '<a>{foo.bar}</a>' },
@@ -35,6 +45,9 @@ ruleTester.run('anchor-has-content', rule, {
   ].map(parserOptionsMapper),
   invalid: [
     { code: '<a />', errors: [expectedError] },
+    { code: '<a data-l10n-id="" />', options: attributes, errors: [expectedError] },
+    { code: '<a data-l10n-id />', options: attributes, errors: [expectedError] },
+    { code: '<Anchor />', options: components, errors: [expectedError] },
     { code: '<a><Bar aria-hidden /></a>', errors: [expectedError] },
     { code: '<a>{undefined}</a>', errors: [expectedError] },
   ].map(parserOptionsMapper),

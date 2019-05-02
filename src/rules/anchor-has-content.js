@@ -7,14 +7,17 @@
 // Rule Definition
 // ----------------------------------------------------------------------------
 
-import { elementType } from 'jsx-ast-utils';
+import { elementType, getProp, getPropValue } from 'jsx-ast-utils';
 import { arraySchema, generateObjSchema } from '../util/schemas';
 import hasAccessibleChild from '../util/hasAccessibleChild';
 
 
 const errorMessage = 'Anchors must have content and the content must be accessible by a screen reader.';
 
-const schema = generateObjSchema({ components: arraySchema });
+const schema = generateObjSchema({
+  components: arraySchema,
+  attributes: arraySchema,
+});
 
 module.exports = {
   meta: {
@@ -28,6 +31,7 @@ module.exports = {
     JSXOpeningElement: (node) => {
       const options = context.options[0] || {};
       const componentOptions = options.components || [];
+      const attributeOptions = options.attributes || [];
       const typeCheck = ['a'].concat(componentOptions);
       const nodeType = elementType(node);
 
@@ -38,6 +42,13 @@ module.exports = {
       if (hasAccessibleChild(node.parent)) {
         return;
       }
+      if (attributeOptions.some((attribute) => {
+        const value = getPropValue(getProp(node.attributes, attribute));
+        return typeof value === 'string' && value.length > 0;
+      })) {
+        return;
+      }
+
 
       context.report({
         node,
